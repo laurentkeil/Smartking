@@ -1,3 +1,5 @@
+package barrier
+
 import java.nio.ByteBuffer
 import java.util.UUID
 import com.phidgets._
