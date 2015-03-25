@@ -30,7 +30,7 @@ class Barriere {
 			def  detached(ae:DetachEvent) {
 				println("detachment of " + ae);
 				try {
-					servo.setPosition(0, 20.0);
+					servo.setPosition(0, 112.5);
 				} catch {
           case e : PhidgetException => println("Problème quand on le branche");
 				}
@@ -55,19 +55,19 @@ class Barriere {
     servo.openAny();
     servo.waitForAttachment();
     servo.openAny();
-    servo.setPosition(0, 10.0);
+    servo.setPosition(0, 112.5);
     servo.setEngaged(0, true);
   }
   
   def ouverture():Unit ={
 		println("Ouverture barrière...");
-	  servo.setPosition(0, 120.0);
+	  servo.setPosition(0, 0.0);
 		println("Barrière ouverte");
 	}	
 	
 	def  fermeture() = {
 		println("Fermeture barrière...");
-	  servo.setPosition(0, 20.0);	
+	  servo.setPosition(0, 112.5);	
 		println("Barrière fermée");
 	}
 	

@@ -15,8 +15,9 @@ import java.awt._
 object RFID extends JFrame {
   
         val rfid = new RFIDPhidget()
-        //val barriere = new Barriere()    
+        val barriere = new Barriere()    
         var action = "no"
+        var inscription = false
   
         val container = new JPanel()
         val center = new JPanel()
@@ -80,9 +81,6 @@ object RFID extends JFrame {
         userMailLabel.setText("E-mail : ")
         userMail.setEditable(false)
         userMail.setPreferredSize(new Dimension(300, 30))
-        userMdpLabel.setText("Mot de passe : ")
-        userMdp.setEditable(false)
-        userMdp.setPreferredSize(new Dimension(300, 30))
         userPan.setBorder(BorderFactory.createTitledBorder("Informations utilisateur"))
         userPan.setBackground(Color.WHITE)
         userPan.add(userNomLabel)
@@ -91,8 +89,6 @@ object RFID extends JFrame {
         userPan.add(userPrenom)
         userPan.add(userMailLabel)
         userPan.add(userMail)
-        userPan.add(userMdpLabel)
-        userPan.add(userMdp)
         client.setEnabled(false)
         userPan.add(client)
         
@@ -131,13 +127,13 @@ object RFID extends JFrame {
      //Classe écoutant notre bouton
     class openListener extends ActionListener {
        def actionPerformed(arg0 : ActionEvent) {
-         //barriere.ouverture()
+         barriere.ouverture()
       }
     }
      //Classe écoutant notre bouton
     class closeListener extends ActionListener {
        def actionPerformed(arg0 : ActionEvent) {
-         //barriere.fermeture()
+         barriere.fermeture()
       }
     }
      //Classe écoutant notre bouton
@@ -157,9 +153,8 @@ object RFID extends JFrame {
        def actionPerformed(arg0 : ActionEvent) {
          action = "update"
          //write a tag:
-                try {
+                try { //TODO
                     val tag = tagLu.getText
-                    rfid.write(tag, RFIDPhidget.PHIDGET_RFID_PROTOCOL_PHIDGETS, false);  //écrit sur la carte
                     println("\nWrite Tag : " + tag);
                     //entre le tag du user en BD
                     val responsePost = Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag))).asString        
@@ -188,8 +183,8 @@ object RFID extends JFrame {
                     val tag = (time.toString() ++ uuid.toString.replace("-", "").substring(9,23))
                     rfid.write(tag, RFIDPhidget.PHIDGET_RFID_PROTOCOL_PHIDGETS, false);  //écrit sur la carte
                     println("\nWrite Tag : " + tag);
-                    //entre le tag du user en BD
-                    val responsePost = Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag))).asString        
+                    //entre le tag du user en BD TODO vide
+                    val responsePost = Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userNom.getText), ("firstname", userPrenom.getText), ("mail", userMail.getText))).asString        
                     println(responsePost)
                     rfid.setOutputState(1, true) //ecriture : vert si tag a bien été écrit en BD
                     //Boîte du message d'information
@@ -210,6 +205,7 @@ object RFID extends JFrame {
     class FormListener extends ActionListener {
       def actionPerformed(e : ActionEvent) {
         if(combo.getSelectedItem() == "Inscription") {
+          inscription = true
           south.removeAll()
           south.revalidate()
           south.repaint()
@@ -220,8 +216,9 @@ object RFID extends JFrame {
           userNom.setEditable(true)
           userPrenom.setEditable(true)
           userMail.setEditable(true)
-          userMdp.setEditable(true)
         } else {
+          action = "no"
+          inscription = false
           south.removeAll()
           south.revalidate()
           south.repaint()
@@ -236,13 +233,12 @@ object RFID extends JFrame {
           userNom.setEditable(false)
           userPrenom.setEditable(false)
           userMail.setEditable(false)
-          userMdp.setEditable(false)
         }
       }  
     } 
     
     def main(args:Array[String]) {
-        //barriere.Barriere()
+        barriere.Barriere()
         
         RFID()
         
@@ -290,24 +286,38 @@ object RFID extends JFrame {
                 { 
                   def tagGained(oe : TagGainEvent)
                   {
-                    println("\nTag Gained: " + oe.getValue());
-                    tagLu.setText(oe.getValue())
-                    //recherche le tag du user en BD
-                    if(action == "in" || action == "out") {
-                      val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params(Map(("action", action),("idTag", oe.getValue))).asString        
-                      println(responsePost)
-                      if (responsePost != "\"NotFound\"" && responsePost != "\"AccessDenied\"") {    
-                         client.setSelected(true)
-                         rfid.setOutputState(1, true) //vert si le tag est présent en BD
-                         //barriere.ouverture()
-                         //Boîte du message d'information
-                         JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
-                         Thread.sleep(2000)
-                         //barriere.fermeture()
-                      } else {  
-                         rfid.setOutputState(0, true) //rouge si le tag est présent en BD
-                         JOptionPane.showMessageDialog(null, "L'utilisateur n'a pas pu passer", "Passage", JOptionPane.ERROR_MESSAGE);
-                         if(responsePost != "\"NotFound\"") client.setSelected(true) else client.setSelected(false)
+                    val tag = oe.getValue
+                    println("\nTag Gained: " + tag);
+                    tagLu.setText(tag)
+                    if(!inscription) {
+                      val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
+                      if(responseGet != "\"NotFound\"") {
+                        val json = new JSONObject(responseGet)
+                        userNom.setText(json.get("lastname").toString)
+                        userPrenom.setText(json.get("firstname").toString)
+                        userMail.setText(json.get("mail").toString)
+                        client.setSelected(true)
+                      } else {
+                        userNom.setText("")
+                        userPrenom.setText("")
+                        userMail.setText("")
+                        client.setSelected(false)
+                      }
+                      //recherche le tag du user en BD
+                      if(action == "in" || action == "out") {
+                        val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params(Map(("action", action),("idTag", tag))).asString        
+                        println(responsePost)
+                        if (responsePost != "\"NotFound\"" && responsePost != "\"AccessDenied\"") {   
+                           rfid.setOutputState(1, true) //vert si le tag est présent en BD
+                           barriere.ouverture()
+                           //Boîte du message d'information
+                           JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
+                           Thread.sleep(2000)
+                           barriere.fermeture()
+                        } else {  
+                           rfid.setOutputState(0, true) //rouge si le tag est présent en BD
+                           JOptionPane.showMessageDialog(null, "L'utilisateur n'a pas pu passer", "Passage", JOptionPane.ERROR_MESSAGE);
+                        }
                       }
                     }
                   }
