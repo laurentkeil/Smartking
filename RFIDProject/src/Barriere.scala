@@ -10,7 +10,7 @@ import com.phidgets.event._
 
 
 class Barriere {
-	var servo:AdvancedServoPhidget=null;
+	var servo:AdvancedServoPhidget=null; //test
 	val open:Boolean=false;
 	val close:Boolean=false;
 	
