@@ -21,40 +21,48 @@ public abstract class PanelWelcome extends JPanel
 	 */
 	private static final long serialVersionUID = 3862594280332085599L;
 	
+	protected JPanel center, south, top, readPan, userPan;
+	protected JButton in, out, open, close, inscription, update;
+	protected JLabel choix, tagLabel, userNomLabel, userPrenomLabel, userMailLabel;
+	protected JTextField tagLu, userNom, userPrenom, userMail;
+	protected JComboBox<String> combo;
+	protected JCheckBox client;
+	
 	public PanelWelcome()
 	{
 		new JPanel();
-		JPanel center = new JPanel();
-		JPanel south = new JPanel();
-		JPanel top = new JPanel();
-		JPanel readPan = new JPanel();
-		JPanel userPan = new JPanel();
-		new JButton("Inscription");
-		new JButton("Mise à jour");
-		JButton in = new JButton("Entrée parking");
-		JButton out = new JButton("Sortie Parking");
-		JButton open = new JButton("Ouvrir barrière");
-		JButton close = new JButton("Fermer barrière");
-		JLabel choix = new JLabel("Choix de l'action");
-		JComboBox<String> combo = new JComboBox<String>();
-		JLabel tagLabel = new JLabel();
-		JTextField tagLu = new JTextField();
-		JLabel userNomLabel = new JLabel();
-		JTextField userNom = new JTextField();
-		JLabel userPrenomLabel = new JLabel();
-		JTextField userPrenom = new JTextField();
-		JLabel userMailLabel = new JLabel();
-		JTextField userMail = new JTextField();
-		new JLabel();
-		new JTextField();
-		JCheckBox client = new JCheckBox("Client");
+		center = new JPanel();
+		south = new JPanel();
+		top = new JPanel();
+		readPan = new JPanel();
+		userPan = new JPanel();
+		inscription = new JButton("Inscription");
+		update = new JButton("Mise à jour");
+		in = new JButton("Entrée parking");
+		out = new JButton("Sortie Parking");
+		open = new JButton("Ouvrir barrière");
+		close = new JButton("Fermer barrière");
+		choix = new JLabel("Choix de l'action");
+		combo = new JComboBox<String>();
+		tagLabel = new JLabel();
+		tagLu = new JTextField();
+		userNomLabel = new JLabel();
+		userNom = new JTextField();
+		userPrenomLabel = new JLabel();
+		userPrenom = new JTextField();
+		userMailLabel = new JLabel();
+		userMail = new JTextField();
+
+		client = new JCheckBox("Client");
       
 	    setBackground(Color.GRAY);
 	    setLayout(new BorderLayout());
 
 	    combo.addItem("Scan");
 	    combo.addItem("Inscription");
-	    //combo.addActionListener(new FormListener())
+	    
+	    combo.addActionListener(formListener());
+	    
 	    top.add(choix);
 	    top.add(combo);
 	    add(top, BorderLayout.NORTH);
@@ -154,8 +162,21 @@ public abstract class PanelWelcome extends JPanel
 		};
 	}
 	
+	public ActionListener formListener()
+	{
+		return new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				actionScalaForm();
+			}
+		};
+	}
+	
 	protected abstract void actionScalaIn();
 	protected abstract void actionScalaOut();
 	protected abstract void actionScalaOpen();
 	protected abstract void actionScalaClose();
+	protected abstract void actionScalaForm();
 }

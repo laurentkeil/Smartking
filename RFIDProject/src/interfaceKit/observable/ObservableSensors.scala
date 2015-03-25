@@ -29,6 +29,11 @@ object ObservableSensors
     val obs2 = Observable.from(streamSensor1)
     obs1.zip(obs2)
   }
+  
+  def observableTupleWithInterval(streamSensor0:Stream[Option[Int]], streamSensor1:Stream[Option[Int]]) =
+  {
+    setIntervalToObservable(observableTuple(streamSensor0, streamSensor1));
+  }
 
   def setIntervalToObservable(obs: Observable[(Option[Int], Option[Int])]) =
   {

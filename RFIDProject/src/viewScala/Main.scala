@@ -14,7 +14,7 @@ object Main
       
       override def actionScalaIn() 
       {
-        barriere.ouverture() 
+        barriere.ouverture()
       }
 
       override def actionScalaOut() 
@@ -30,6 +30,11 @@ object Main
       override def actionScalaClose() 
       {
 
+      }
+      
+      override def actionScalaForm()
+      {
+        
       }
     })
     

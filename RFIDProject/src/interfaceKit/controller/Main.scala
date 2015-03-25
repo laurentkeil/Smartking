@@ -24,11 +24,8 @@ object Main
      * Afther the attachement has been done. We create 1 data stream for each sensor.
      * Then we create an observable over the values of the sensor 0 and the sensor 1
      */
-    val observableTupleWithConditions = ObservableSensors.observableTuple(
+    val observableTupleWithInterval = ObservableSensors.observableTupleWithInterval(
       interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
-
-    val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
-      ObservableSensors.setIntervalToObservable(observableTupleWithConditions)
 
     ObservableSensors.waitCar(observableTupleWithInterval)
     ObservableSensors.waitCarToComeIn(observableTupleWithInterval)
