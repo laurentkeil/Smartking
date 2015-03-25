@@ -35,12 +35,13 @@ object ObservableSensors
     Observable.interval(500 milliseconds).take(1).map(x => obs).flatten
   }
 
-  def waitCar(observableTupleWithInterval: Observable[(Option[Int], Option[Int])]) =
+  def waitCar(observableTupleWithInterval: Observable[(Option[Int], Option[Int])]):Boolean  =
   {
     /*
      * When someone has scanned its RFID. The driver has 60 secondes to reach the barrier.
      * If the car don't come in front of the sensors, we don't update the number of places available.
      */
+    var carIsInFrontOfTheBarrier = false
     val endWaitCar = Promise[Boolean]()
     val onNextCoupleWaitCar: ((Option[Int], Option[Int])) => Unit =
     {
@@ -52,14 +53,15 @@ object ObservableSensors
 
     Try(Await.ready(endWaitCar.future, 10 seconds)) match
     {
-      case Success(x) => println("One car is passing.")
+      case Success(x) => println("One car is passing."); carIsInFrontOfTheBarrier = true
       case Failure(x) => println("Nobody enters in the parking.")
     }
 
     subscriptionWaitCar.unsubscribe()
+    carIsInFrontOfTheBarrier
   }
 
-  def waitCarToComeIn(observableTupleWithInterval: Observable[(Option[Int], Option[Int])]): Unit =
+  def waitCarToComeIn(observableTupleWithInterval: Observable[(Option[Int], Option[Int])]): Boolean =
   {
     /*
      * Afther the attachement has been done. We create 1 data stream for each sensor.
@@ -110,8 +112,14 @@ object ObservableSensors
     subscriptionCarComeIn.unsubscribe()
 
     if(nbOccurrence < 10 || lastCaptorWithInformation == 0)
+    {
       println("The car didn't pass the barrier.")
+      false
+    }
     else
+    {
       print("The car has passed the barrier.")
+      true
+    }
   }
 }
