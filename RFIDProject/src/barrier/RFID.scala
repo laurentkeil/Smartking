@@ -318,9 +318,8 @@ object RFID extends JFrame {
               rfid.setOutputState(1, true) //vert si le tag est présent en BD
               barriere.ouverture()
               //Boîte du message d'information
-              JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
-              Thread.sleep(2000)
-              barriere.fermeture()
+              //JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
+              action = "fin"
             } else {
               rfid.setOutputState(0, true) //rouge si le tag est présent en BD
               JOptionPane.showMessageDialog(null, "L'utilisateur n'a pas pu passer", "Passage", JOptionPane.ERROR_MESSAGE);
@@ -334,27 +333,32 @@ object RFID extends JFrame {
         println("Tag Loss : " + oe.getValue());
         rfid.setOutputState(0, false)
         rfid.setOutputState(1, false)
-
-        if (interfaceKit.isAttached) {
-          val observableTupleWithConditions = ObservableSensors.observableTuple(
-            interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
-
-          val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
-            ObservableSensors.setIntervalToObservable(observableTupleWithConditions)
-
-          if(ObservableSensors.waitCar(observableTupleWithInterval))
-          {
-            if(ObservableSensors.waitCarToComeIn(observableTupleWithInterval))
+        
+        if (action == "fin") {
+          if (interfaceKit.isAttached) {
+            val observableTupleWithConditions = ObservableSensors.observableTuple(
+              interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
+  
+            val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
+              ObservableSensors.setIntervalToObservable(observableTupleWithConditions)
+  
+            if(ObservableSensors.waitCar(observableTupleWithInterval))
             {
-              // le mec est rentré
-            } 
+              println("wait car")
+              if(ObservableSensors.waitCarToComeIn(observableTupleWithInterval))
+              {
+                
+                println("wait car to come in")
+                // le mec est rentré
+              } 
+            }
+            
+            barriere.fermeture()
           }
-          
-          barriere.fermeture()
-        }
-        else
-        {
-          println("You must attach the interfaceKit");
+          else
+          {
+            println("You must attach the interfaceKit");
+          }
         }
       }
     });
