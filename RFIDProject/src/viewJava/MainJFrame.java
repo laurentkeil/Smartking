@@ -101,6 +101,14 @@ public class MainJFrame extends JFrame
             System.exit(0);
     }
     
+    public void replacePanel(JPanel panel)
+    {
+        container.removeAll();
+        container.add(_panelWelcome);
+        container.repaint();
+        container.validate();
+    }
+    
     private class MonGestionnaireAction implements ActionListener
     {
         public void actionPerformed(ActionEvent e)
@@ -110,10 +118,7 @@ public class MainJFrame extends JFrame
 
             if (e.getSource() == menuItemHome)
             {
-                container.removeAll();
-                container.add(_panelWelcome);
-                container.repaint();
-                container.validate();
+                replacePanel(_panelWelcome);
             }
         }
     }
