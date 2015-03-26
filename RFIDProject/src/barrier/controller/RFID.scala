@@ -29,6 +29,46 @@ object RFID {
 
   var action = "no"
   var inscription = false
+  
+  def RFID(rfid : RFIDPhidget ) {
+    
+      rfid.addAttachListener(new AttachListener() {
+        def attached(ae: AttachEvent) {
+          try {
+            (ae.getSource() match {
+              case aeRFID: RFIDPhidget => aeRFID
+            }).setAntennaOn(true)
+  
+            (ae.getSource() match {
+              case aeRFID: RFIDPhidget => aeRFID
+            }).setLEDOn(true)
+          } catch {
+            case exc: PhidgetException => println(exc)
+          }
+          println("attachment 1 of " + ae)
+        }
+      })
+    
+      rfid.addTagLossListener(new TagLossListener() {
+        def tagLost(oe: TagLossEvent) {
+          println("Tag Loss : " + oe.getValue());
+          rfid.setOutputState(0, false)
+          rfid.setOutputState(1, false)
+        }
+      })
+    
+      rfid.addOutputChangeListener(new OutputChangeListener() {
+        def outputChanged(oe: OutputChangeEvent) {
+          println(oe.getIndex + " change to " + oe.getState);
+        }
+      })
+
+      rfid.openAny();
+      println("waiting for RFID attachment...");
+      rfid.waitForAttachment(1000);
+    
+  }
+  
 
   def in() {
     action = "in"
@@ -37,6 +77,7 @@ object RFID {
   def out() {
     action = "out"
   }
+<<<<<<< HEAD
 
   def found(tag: String): Option[JSONObject] = {
     val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
@@ -60,9 +101,31 @@ object RFID {
         true
       } else {
         false
+=======
+  
+  def found(tag : String) : Option[JSONObject] = {
+          val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
+          if (responseGet != "\"TagNotFound\"") {
+              Some(new JSONObject(responseGet))
+          } else {
+              None
+          }
+  }
+  
+  def passed (tag : String) = {
+      //recherche le tag du user en BD
+      if (action == "in" || action == "out") {
+            val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/in/" + tag).asString
+            if (responseGet == "\"Ok\"") {
+                true
+            } else {
+                false
+            }
+>>>>>>> origin/master
       }
     }
   }
+<<<<<<< HEAD
 
   def carPassed() : Boolean = 
   {
@@ -81,6 +144,37 @@ object RFID {
     }
     else
       false
+=======
+  
+  def carPassed (tag : String) = {
+    
+          //val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+          //println(responsePost)
+          
+          if (interfaceKit.isAttached) {
+            /*val observableTupleWithConditions = ObservableSensors.observableTuple(
+              interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
+  
+            val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
+              ObservableSensors.setIntervalToObservable(observableTupleWithConditions)
+  
+            if(ObservableSensors.waitCar(observableTupleWithInterval)) {
+              println("wait car")
+              if(ObservableSensors.waitCarToComeIn(observableTupleWithInterval)) {
+                println("wait car to come in")
+                
+                  val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+                  println(responsePost)
+                   // le mec est rentré
+              } 
+            }*/
+            true
+          }
+          else {
+            println("You must attach the interfaceKit");
+            false
+          }
+>>>>>>> origin/master
   }
 
   def genTag(): String = {
@@ -93,6 +187,7 @@ object RFID {
     action = "write"
     Try(Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
   }
+  
   /*
   class updateListener extends ActionListener {
     def actionPerformed(arg0: ActionEvent) {
