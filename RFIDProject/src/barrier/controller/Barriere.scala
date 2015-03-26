@@ -1,7 +1,7 @@
 /** 
  * @author Jason 
  */ 
-package barrier
+package barrier.controller
 
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;

@@ -30,14 +30,15 @@ public abstract class PanelWelcome extends JPanel
 	
 	public PanelWelcome()
 	{
-		new JPanel();
 		center = new JPanel();
 		south = new JPanel();
 		top = new JPanel();
 		readPan = new JPanel();
 		userPan = new JPanel();
 		inscription = new JButton("Inscription");
+        inscription.addActionListener(writeListener());
 		update = new JButton("Mise à jour");
+        update.addActionListener(updateListener());
 		in = new JButton("Entrée parking");
 		out = new JButton("Sortie Parking");
 		open = new JButton("Ouvrir barrière");
@@ -85,7 +86,7 @@ public abstract class PanelWelcome extends JPanel
 	    userPan.add(userMailLabel);
 	    userPan.add(userMail);
 	    client.setEnabled(false);
-	    add(client);
+	    userPan.add(client);
 
 	    tagLabel.setText("Tag : ");
 	    tagLu.setEditable(false);
@@ -161,6 +162,31 @@ public abstract class PanelWelcome extends JPanel
 			}
 		};
 	}
+
+	
+	public ActionListener writeListener()
+	{
+		return new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				actionScalaWrite();
+			}
+		};
+	}
+
+	public ActionListener updateListener()
+	{
+		return new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				actionScalaUpdate();
+			}
+		};
+	}
 	
 	public ActionListener formListener()
 	{
@@ -178,5 +204,7 @@ public abstract class PanelWelcome extends JPanel
 	protected abstract void actionScalaOut();
 	protected abstract void actionScalaOpen();
 	protected abstract void actionScalaClose();
+	protected abstract void actionScalaWrite();
+	protected abstract void actionScalaUpdate();
 	protected abstract void actionScalaForm();
 }
