@@ -21,99 +21,145 @@ public abstract class PanelWelcome extends JPanel
 	 */
 	private static final long serialVersionUID = 3862594280332085599L;
 	
-	protected JPanel center, south, top, readPan, userPan;
-	protected JButton in, out, open, close, inscription, update;
-	protected JLabel choix, tagLabel, userNomLabel, userPrenomLabel, userMailLabel;
-	protected JTextField tagLu, userNom, userPrenom, userMail;
-	protected JComboBox<String> combo;
-	protected JCheckBox client;
+	protected JPanel _panelCenter, _panelSouth, _panelTop, _panelReadPan, _panelUserPan;
+	protected JButton _buttonIn, _buttonOut, _buttonOpen, _buttonClose, _buttonInscription, _buttonUpdate;
+	protected JLabel _labelChoix, _labelTag, _labelUserNom, _labelUserPrenom, _labelUserMail;
+	protected JTextField _textFieldTagLu, _textFieldUserNom, _textFieldUserPrenom, _textFieldUserMail;
+	protected JComboBox<String> _comboBox;
+	protected JCheckBox _checkBoxClient;
 	
 	public PanelWelcome()
 	{
-		center = new JPanel();
-		south = new JPanel();
-		top = new JPanel();
-		readPan = new JPanel();
-		userPan = new JPanel();
-		inscription = new JButton("Inscription");
-        inscription.addActionListener(writeListener());
-		update = new JButton("Mise à jour");
-        update.addActionListener(updateListener());
-		in = new JButton("Entrée parking");
-		out = new JButton("Sortie Parking");
-		open = new JButton("Ouvrir barrière");
-		close = new JButton("Fermer barrière");
-		choix = new JLabel("Choix de l'action");
-		combo = new JComboBox<String>();
-		tagLabel = new JLabel();
-		tagLu = new JTextField();
-		userNomLabel = new JLabel();
-		userNom = new JTextField();
-		userPrenomLabel = new JLabel();
-		userPrenom = new JTextField();
-		userMailLabel = new JLabel();
-		userMail = new JTextField();
+		_panelCenter = new JPanel();
+		_panelSouth = new JPanel();
+		_panelTop = new JPanel();
+		_panelReadPan = new JPanel();
+		_panelUserPan = new JPanel();
+		
+		_buttonInscription = new JButton("Inscription");
+		_buttonUpdate = new JButton("Mise à jour");
+		_buttonIn = new JButton("Entrée parking");
+		_buttonOut = new JButton("Sortie Parking");
+		_buttonOpen = new JButton("Ouvrir barrière");
+		_buttonClose = new JButton("Fermer barrière");
+		_labelChoix = new JLabel("Choix de l'action");
+        
+        _buttonInscription.addActionListener(writeListener());
+        _buttonUpdate.addActionListener(updateListener());
+	    _buttonIn.addActionListener(inListener());
+	    _buttonOut.addActionListener(outListener());
+	    _buttonOpen.addActionListener(openListener());
+	    _buttonClose.addActionListener(closeListener());
+		
+		_comboBox = new JComboBox<String>();
+	    _comboBox.addItem("Scan");
+	    _comboBox.addItem("Inscription");
+	    _comboBox.addActionListener(formListener());
+	    
+		_labelTag = new JLabel();
+		_textFieldTagLu = new JTextField();
+		
+		_labelUserNom = new JLabel();
+	    _labelUserNom.setText("Nom : ");
+		_textFieldUserNom = new JTextField();
+	    _textFieldUserNom.setEditable(false);
+	    _textFieldUserNom.setPreferredSize(new Dimension(300, 30));
+		
+		_labelUserPrenom = new JLabel();
+	    _labelUserPrenom.setText("Prénom : ");
+		_textFieldUserPrenom = new JTextField();
+	    _textFieldUserPrenom.setEditable(false);
+	    _textFieldUserPrenom.setPreferredSize(new Dimension(300, 30));
+		
+		_labelUserMail = new JLabel();
+	    _labelUserMail.setText("E-mail : ");
+		_textFieldUserMail = new JTextField();
+	    _textFieldUserMail.setEditable(false);
+	    _textFieldUserMail.setPreferredSize(new Dimension(300, 30));
 
-		client = new JCheckBox("Client");
-      
+	    _labelTag.setText("Tag : ");
+	    _textFieldTagLu.setEditable(false);
+	    _textFieldTagLu.setPreferredSize(new Dimension(300, 30));
+	    
+		_checkBoxClient = new JCheckBox("Client");
+	    _checkBoxClient.setEnabled(false);
+
 	    setBackground(Color.GRAY);
 	    setLayout(new BorderLayout());
+    
+	    _panelTop.add(_labelChoix);
+	    _panelTop.add(_comboBox);
+	    add(_panelTop, BorderLayout.NORTH);
 
-	    combo.addItem("Scan");
-	    combo.addItem("Inscription");
-	    
-	    combo.addActionListener(formListener());
-	    
-	    top.add(choix);
-	    top.add(combo);
-	    add(top, BorderLayout.NORTH);
+	    _panelUserPan.setBorder(BorderFactory.createTitledBorder("Informations utilisateur"));
+	    _panelUserPan.setBackground(Color.WHITE);
+	    _panelUserPan.add(_labelUserNom);
+	    _panelUserPan.add(_textFieldUserNom);
+	    _panelUserPan.add(_labelUserPrenom);
+	    _panelUserPan.add(_textFieldUserPrenom);
+	    _panelUserPan.add(_labelUserMail);
+	    _panelUserPan.add(_textFieldUserMail);
+	    _panelUserPan.add(_checkBoxClient);
 
-	    userNomLabel.setText("Nom : ");
-	    userNom.setEditable(false);
-	    userNom.setPreferredSize(new Dimension(300, 30));
-	    userPrenomLabel.setText("Prénom : ");
-	    userPrenom.setEditable(false);
-	    userPrenom.setPreferredSize(new Dimension(300, 30));
-	    userMailLabel.setText("E-mail : ");
-	    userMail.setEditable(false);
-	    userMail.setPreferredSize(new Dimension(300, 30));
-	    userPan.setBorder(BorderFactory.createTitledBorder("Informations utilisateur"));
-	    userPan.setBackground(Color.WHITE);
-	    userPan.add(userNomLabel);
-	    userPan.add(userNom);
-	    userPan.add(userPrenomLabel);
-	    userPan.add(userPrenom);
-	    userPan.add(userMailLabel);
-	    userPan.add(userMail);
-	    client.setEnabled(false);
-	    userPan.add(client);
 
-	    tagLabel.setText("Tag : ");
-	    tagLu.setEditable(false);
-	    tagLu.setPreferredSize(new Dimension(300, 30));
-	    readPan.setBorder(BorderFactory.createTitledBorder("Tag lu"));
-	    readPan.setPreferredSize(new Dimension(300, 100));
-	    readPan.setBackground(Color.WHITE);
-	    readPan.add(tagLabel);
-	    readPan.add(tagLu);
+	    _panelReadPan.setBorder(BorderFactory.createTitledBorder("Tag lu"));
+	    _panelReadPan.setPreferredSize(new Dimension(300, 100));
+	    _panelReadPan.setBackground(Color.WHITE);
+	    _panelReadPan.add(_labelTag);
+	    _panelReadPan.add(_textFieldTagLu);
 
-	    center.setLayout(new BorderLayout());
-	    center.setBackground(Color.WHITE);
-	    center.add(readPan, BorderLayout.NORTH);
-	    center.add(userPan, BorderLayout.CENTER);
-	    add(center, BorderLayout.CENTER);
+	    _panelCenter.setLayout(new BorderLayout());
+	    _panelCenter.setBackground(Color.WHITE);
+	    _panelCenter.add(_panelReadPan, BorderLayout.NORTH);
+	    _panelCenter.add(_panelUserPan, BorderLayout.CENTER);
+	    add(_panelCenter, BorderLayout.CENTER);
 
-	    south.setPreferredSize(new Dimension(300, 70));
-	    in.addActionListener(inListener());
-	    south.add(in);
-	    out.addActionListener(outListener());
-	    south.add(out);
-	    open.addActionListener(openListener());
-	    south.add(open);
-	    close.addActionListener(closeListener());
-	    south.add(close);
-	    add(south, BorderLayout.SOUTH);
+	    _panelSouth.setPreferredSize(new Dimension(300, 70));
+	    _panelSouth.add(_buttonIn);
+
+	    _panelSouth.add(_buttonOut);
+	    _panelSouth.add(_buttonOpen);
+	    _panelSouth.add(_buttonClose);
+	    add(_panelSouth, BorderLayout.SOUTH);
 	}
+	
+	public void switchToWriteMode()
+	{
+        _panelSouth.removeAll();
+        _panelSouth.add(_buttonInscription);
+        _panelSouth.add(_buttonUpdate);
+        _textFieldUserNom.setEditable(true);
+        _textFieldUserPrenom.setEditable(true);
+        _textFieldUserMail.setEditable(true);
+        _panelSouth.revalidate();
+        _panelSouth.repaint();
+	}
+	
+	public void switchToReadMode()
+	{
+        _panelSouth.removeAll();
+        _panelSouth.revalidate();
+        _panelSouth.repaint();
+        _panelSouth.add(_buttonIn);
+        _panelSouth.add(_buttonOut);
+        _panelSouth.add(_buttonOpen);
+        _panelSouth.add(_buttonClose);
+        _textFieldUserNom.setEditable(false);
+        _textFieldUserPrenom.setEditable(false);
+        _textFieldUserMail.setEditable(false);
+	}
+	
+    public void updatePersonFields(String lastName, String firstName, String mail)
+    {
+        _textFieldUserNom.setText(lastName);
+        _textFieldUserPrenom.setText(firstName);
+        _textFieldUserMail.setText(mail);
+        
+        if(lastName.equals("") && firstName.equals("") && mail.equals(""))
+        	_checkBoxClient.setSelected(false);
+        else
+        	_checkBoxClient.setSelected(true);
+    }
 	
 	public ActionListener inListener()
 	{

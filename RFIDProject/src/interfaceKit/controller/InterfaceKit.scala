@@ -8,15 +8,12 @@ import scala.util.{ Failure, Try }
 /**
  * Created by Steven on 18-03-15.
  */
-class InterfaceKit {
+object InterfaceKit 
+{
   private val interfaceKit: InterfaceKitPhidget = new InterfaceKitPhidget()
-
-  def initializeInterfaceKit() 
-  {
-    addAttachListener
-    addDetachListener
-    openAny
-  }
+  addAttachListener
+  addDetachListener
+  openAny
 
   def getStreamForValuesFromSensor(index: Int): Stream[Option[Int]] =
     {
