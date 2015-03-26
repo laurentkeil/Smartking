@@ -11,7 +11,7 @@ import scala.util.{Failure, Success, Try}
 
 class InterfaceKitWaitCar 
 {
-  def waitForCarToPassBarrier(interfaceKit:InterfaceKit, rfid:String)
+  def waitForCarToPassBarrier(interfaceKit:InterfaceKit, rfid:String):Boolean =
   {
     val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] = ObservableSensors.observableTuple(
       interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
@@ -19,12 +19,21 @@ class InterfaceKitWaitCar
     if(waitCar(observableTupleWithInterval))
     {
       if(waitCarToComeIn(observableTupleWithInterval))
+      {
         DataAdd.updateTagCarComeIn(rfid)
+        true
+      }
       else
+      {
         DataAdd.updateTagCarNotComeIn(rfid)
+        false
+      }
     }
     else
+    {
       DataAdd.updateTagCarNotComeIn(rfid)
+      false
+    }
   }
   
   def waitCar(observableTupleWithInterval: Observable[(Option[Int], Option[Int])]):Boolean  =
