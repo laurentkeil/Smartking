@@ -77,31 +77,6 @@ object RFID {
   def out() {
     action = "out"
   }
-<<<<<<< HEAD
-
-  def found(tag: String): Option[JSONObject] = {
-    val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
-    println(responseGet)
-    if (responseGet != "\"TagNotFound\"") {
-      Some(new JSONObject(responseGet))
-    } else {
-      None
-    }
-  }
-
-  def passed(id: String) = {
-    //recherche le tag du user en BD
-    if (action == "in" || action == "out") {
-      val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/" + id).asString
-      println(responseGet)
-      val responsePost = Http.post("http://smarking.azurewebsites.net/api/Flow").params(Map(("id", id), ("type", "1"), ("floor", "1"), ("date", "2015-03-25T22:34:33.967675+00:00"))).asString
-      println(responsePost)
-      if (responsePost != "\"NotFound\"" && responsePost != "\"AccessDenied\"") {
-        action = "fin"
-        true
-      } else {
-        false
-=======
   
   def found(tag : String) : Option[JSONObject] = {
           val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
@@ -122,60 +97,24 @@ object RFID {
             } else {
                 false
             }
->>>>>>> origin/master
       }
-    }
   }
-<<<<<<< HEAD
-
-  def carPassed() : Boolean = 
-  {
-    if (action == "fin") 
-    {
-      if (interfaceKit.isAttached) 
-      {
-        val interfaceKitWaitCar = new InterfaceKitWaitCar()
-        interfaceKitWaitCar.waitForCarToPassBarrier(interfaceKit, "230")  // PUT RIFD HERE
-      } 
-      else 
-      {
-        println("You must attach the interfaceKit");
-        false
-      }
-    }
-    else
-      false
-=======
   
-  def carPassed (tag : String) = {
+  def carPassed (tag : String) : Boolean = {
     
           val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
           println(responsePost)
           
-          if (interfaceKit.isAttached) {
-            /*val observableTupleWithConditions = ObservableSensors.observableTuple(
-              interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
-  
-            val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
-              ObservableSensors.setIntervalToObservable(observableTupleWithConditions)
-  
-            if(ObservableSensors.waitCar(observableTupleWithInterval)) {
-              println("wait car")
-              if(ObservableSensors.waitCarToComeIn(observableTupleWithInterval)) {
-                println("wait car to come in")
-                
-                  val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
-                  println(responsePost)
-                   // le mec est rentré
-              } 
-            }*/
-            true
-          }
-          else {
+         if (interfaceKit.isAttached) 
+         {
+            val interfaceKitWaitCar = new InterfaceKitWaitCar()
+            interfaceKitWaitCar.waitForCarToPassBarrier(interfaceKit, "230")  // PUT RIFD HERE
+         } 
+         else 
+         {
             println("You must attach the interfaceKit");
             false
-          }
->>>>>>> origin/master
+         }
   }
 
   def genTag(): String = {
