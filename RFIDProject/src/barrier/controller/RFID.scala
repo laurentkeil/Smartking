@@ -125,6 +125,7 @@ object RFID {
       }
     }
   }
+<<<<<<< HEAD
 
   def carPassed() : Boolean = 
   {
@@ -143,6 +144,37 @@ object RFID {
     }
     else
       false
+=======
+  
+  def carPassed (tag : String) = {
+    
+          //val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+          //println(responsePost)
+          
+          if (interfaceKit.isAttached) {
+            /*val observableTupleWithConditions = ObservableSensors.observableTuple(
+              interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
+  
+            val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
+              ObservableSensors.setIntervalToObservable(observableTupleWithConditions)
+  
+            if(ObservableSensors.waitCar(observableTupleWithInterval)) {
+              println("wait car")
+              if(ObservableSensors.waitCarToComeIn(observableTupleWithInterval)) {
+                println("wait car to come in")
+                
+                  val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+                  println(responsePost)
+                   // le mec est rentré
+              } 
+            }*/
+            true
+          }
+          else {
+            println("You must attach the interfaceKit");
+            false
+          }
+>>>>>>> origin/master
   }
 
   def genTag(): String = {
