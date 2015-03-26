@@ -116,6 +116,7 @@ object RFID {
       //recherche le tag du user en BD
       if (action == "in" || action == "out") {
             val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/in/" + tag).asString
+            println(responseGet)
             if (responseGet == "\"Ok\"") {
                 true
             } else {
@@ -148,8 +149,8 @@ object RFID {
   
   def carPassed (tag : String) = {
     
-          //val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
-          //println(responsePost)
+          val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+          println(responsePost)
           
           if (interfaceKit.isAttached) {
             /*val observableTupleWithConditions = ObservableSensors.observableTuple(
