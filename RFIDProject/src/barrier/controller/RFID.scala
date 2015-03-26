@@ -28,6 +28,46 @@ object RFID {
   
   var action = "no"
   var inscription = false
+  
+  def RFID(rfid : RFIDPhidget ) {
+    
+      rfid.addAttachListener(new AttachListener() {
+        def attached(ae: AttachEvent) {
+          try {
+            (ae.getSource() match {
+              case aeRFID: RFIDPhidget => aeRFID
+            }).setAntennaOn(true)
+  
+            (ae.getSource() match {
+              case aeRFID: RFIDPhidget => aeRFID
+            }).setLEDOn(true)
+          } catch {
+            case exc: PhidgetException => println(exc)
+          }
+          println("attachment 1 of " + ae)
+        }
+      })
+    
+      rfid.addTagLossListener(new TagLossListener() {
+        def tagLost(oe: TagLossEvent) {
+          println("Tag Loss : " + oe.getValue());
+          rfid.setOutputState(0, false)
+          rfid.setOutputState(1, false)
+        }
+      })
+    
+      rfid.addOutputChangeListener(new OutputChangeListener() {
+        def outputChanged(oe: OutputChangeEvent) {
+          println(oe.getIndex + " change to " + oe.getState);
+        }
+      })
+
+      rfid.openAny();
+      println("waiting for RFID attachment...");
+      rfid.waitForAttachment(1000);
+    
+  }
+  
 
   def in() {
       action = "in"
@@ -39,7 +79,6 @@ object RFID {
   
   def found(tag : String) : Option[JSONObject] = {
           val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
-          println(responseGet)
           if (responseGet != "\"TagNotFound\"") {
               Some(new JSONObject(responseGet))
           } else {
@@ -47,15 +86,11 @@ object RFID {
           }
   }
   
-  def passed (id : String) = {
+  def passed (tag : String) = {
       //recherche le tag du user en BD
       if (action == "in" || action == "out") {
-            val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/" + id).asString
-            println(responseGet)
-            val responsePost = Http.post("http://smarking.azurewebsites.net/api/Flow").params(Map(("id", id), ("type", "1"), ("floor", "1"), ("date", "2015-03-25T22:34:33.967675+00:00"))).asString
-            println(responsePost)
-            if (responsePost != "\"NotFound\"" && responsePost != "\"AccessDenied\"") {
-                action = "fin"
+            val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/in/" + tag).asString
+            if (responseGet == "\"Ok\"") {
                 true
             } else {
                 false
@@ -63,10 +98,13 @@ object RFID {
       }
   }
   
-  def carPassed () = {
-        if (action == "fin") {
+  def carPassed (tag : String) = {
+    
+          //val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+          //println(responsePost)
+          
           if (interfaceKit.isAttached) {
-            val observableTupleWithConditions = ObservableSensors.observableTuple(
+            /*val observableTupleWithConditions = ObservableSensors.observableTuple(
               interfaceKit.getStreamForValuesFromSensor(0), interfaceKit.getStreamForValuesFromSensor(1))
   
             val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] =
@@ -76,16 +114,18 @@ object RFID {
               println("wait car")
               if(ObservableSensors.waitCarToComeIn(observableTupleWithInterval)) {
                 println("wait car to come in")
-                // le mec est rentré
+                
+                  val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+                  println(responsePost)
+                   // le mec est rentré
               } 
-            }
+            }*/
             true
           }
           else {
             println("You must attach the interfaceKit");
             false
           }
-        }
   }
   
   def genTag () : String = {
@@ -98,6 +138,7 @@ object RFID {
     action = "write"
     Try ( Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
   }
+  
   /*
   class updateListener extends ActionListener {
     def actionPerformed(arg0: ActionEvent) {

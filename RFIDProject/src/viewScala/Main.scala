@@ -10,10 +10,11 @@ import scala.util._
 object Main {
   def main(args: Array[String]) {
     
-    val rfidController = RFID
     val barriere = new Barriere()
     barriere.Barriere()
+    val rfidController = RFID
     val rfid = new RFIDPhidget()
+    rfidController.RFID(rfid)
     
     val panelWelcome = (new PanelWelcome {
       
@@ -86,7 +87,7 @@ object Main {
       
       override def actionScalaUpdate() 
       {
-        barriere.ouverture()
+          
       }
       
       rfid.addTagGainListener(new TagGainListener() {
@@ -95,6 +96,7 @@ object Main {
           println("\nTag Gained: " + tag)
           tagLu.setText(tag) 
           if(rfidController.action != "write") {
+            
               val user = rfidController found tag  
               user match {
                 case Some(userJson) => {
@@ -102,6 +104,7 @@ object Main {
                   userPrenom.setText(userJson.get("firstname").toString)
                   userMail.setText(userJson.get("mail").toString)
                   client.setSelected(true)
+                  
                   val idUser = userJson.get("id").toString
                   rfidController passed tag match {
                     case true => {
@@ -110,7 +113,7 @@ object Main {
                         //Boîte du message d'information
                         JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);             
                         
-                        rfidController.carPassed() //TODO
+                        rfidController.carPassed(tag) //TODO
                         
                         barriere.fermeture
                     }
@@ -137,50 +140,19 @@ object Main {
       
     })
     
-    rfid.addAttachListener(new AttachListener() {
-      def attached(ae: AttachEvent) {
-        try {
-          (ae.getSource() match {
-            case aeRFID: RFIDPhidget => aeRFID
-          }).setAntennaOn(true);
-
-          (ae.getSource() match {
-            case aeRFID: RFIDPhidget => aeRFID
-          }).setLEDOn(true);
-        } catch {
-          case exc: PhidgetException => println(exc)
-        }
-        println("attachment 1 of " + ae);
-      }
-    });
     rfid.addDetachListener(new DetachListener() {
-      def detached(ae: DetachEvent) {
-        println("detachment  1 of " + ae);
-      }
-    });
+        def detached(ae: DetachEvent) {
+          println("detachment  1 of " + ae)
+          JOptionPane.showMessageDialog(null, "Veuillez rattacher le Phidget RFID", "RFID detached", JOptionPane.WARNING_MESSAGE);                  
+        }
+      })
+      
     rfid.addErrorListener(new ErrorListener() {
-      def error(ee: ErrorEvent) {
-        println("error event for " + ee);
-      }
-    });
-    rfid.addOutputChangeListener(new OutputChangeListener() {
-      def outputChanged(oe: OutputChangeEvent) {
-        println(oe.getIndex + " change to " + oe.getState);
-      }
-    });
-
-    rfid.openAny();
-    println("waiting for RFID attachment...");
-    rfid.waitForAttachment(1000);
-   
-    
-    rfid.addTagLossListener(new TagLossListener() {
-      def tagLost(oe: TagLossEvent) {
-        println("Tag Loss : " + oe.getValue());
-        rfid.setOutputState(0, false)
-        rfid.setOutputState(1, false)
-      }
-    })
+        def error(ee: ErrorEvent) {
+          println("error event for " + ee)
+          JOptionPane.showMessageDialog(null, "Il y a eu une erreur pour l'événement " + ee, "RFID error", JOptionPane.ERROR_MESSAGE);           
+        }
+      }) 
     
     val MainJFrame = new MainJFrame(panelWelcome)
   }  
