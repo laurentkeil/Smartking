@@ -1,6 +1,7 @@
 package barrier.controller
 
 import java.nio.ByteBuffer
+import model._
 import java.util.UUID
 import com.phidgets._
 import com.phidgets.event._
@@ -15,60 +16,70 @@ import interfaceKit.controller.InterfaceKit
 import interfaceKit.observable.ObservableSensors
 import rx.lang.scala.Observable
 import interfaceKit.controller._
+import interfaceKit.data._
 
 /**
  * @author laurent
  */
-object RFID {
-
-  val interfaceKit = new InterfaceKit()
-  /* We initialize the interface kit */
-  interfaceKit.addAttachListener
-  interfaceKit.addDetachListener
-  interfaceKit.openAny
-
+object RFID 
+{
+  val rfid: RFIDPhidget = new RFIDPhidget()
+  addAttachListener()
+  tagLossListener()
+  addOutputChangeListener()
+  openAny()
+  waitForAttachement()
+  
   var action = "no"
   var inscription = false
-  
-  def RFID(rfid : RFIDPhidget ) {
-    
-      rfid.addAttachListener(new AttachListener() {
-        def attached(ae: AttachEvent) {
-          try {
-            (ae.getSource() match {
-              case aeRFID: RFIDPhidget => aeRFID
-            }).setAntennaOn(true)
-  
-            (ae.getSource() match {
-              case aeRFID: RFIDPhidget => aeRFID
-            }).setLEDOn(true)
-          } catch {
-            case exc: PhidgetException => println(exc)
-          }
-          println("attachment 1 of " + ae)
-        }
-      })
-    
-      rfid.addTagLossListener(new TagLossListener() {
-        def tagLost(oe: TagLossEvent) {
-          println("Tag Loss : " + oe.getValue());
-          rfid.setOutputState(0, false)
-          rfid.setOutputState(1, false)
-        }
-      })
-    
-      rfid.addOutputChangeListener(new OutputChangeListener() {
-        def outputChanged(oe: OutputChangeEvent) {
-          println(oe.getIndex + " change to " + oe.getState);
-        }
-      })
 
-      rfid.openAny();
-      println("waiting for RFID attachment...");
-      rfid.waitForAttachment(1000);
-    
+  def addAttachListener()
+  {
+    rfid.addAttachListener(new AttachListener() {
+      def attached(ae: AttachEvent) {
+        try {
+          (ae.getSource() match {
+            case aeRFID: RFIDPhidget => aeRFID
+          }).setAntennaOn(true)
+  
+          (ae.getSource() match {
+            case aeRFID: RFIDPhidget => aeRFID
+          }).setLEDOn(true)
+        } catch {
+          case exc: PhidgetException => println(exc)
+        }
+        println("attachment 1 of " + ae)
+      }
+    })
   }
   
+  def tagLossListener()
+  {
+    rfid.addTagLossListener(new TagLossListener() {
+      def tagLost(oe: TagLossEvent) {
+        println("Tag Loss : " + oe.getValue());
+        rfid.setOutputState(0, false)
+        rfid.setOutputState(1, false)
+      }
+    })
+  }
+  
+  def addOutputChangeListener()
+  {
+    rfid.addOutputChangeListener(new OutputChangeListener() {
+      def outputChanged(oe: OutputChangeEvent) {
+        println(oe.getIndex + " change to " + oe.getState);
+        }
+     })
+  }
+  
+  def openAny() = rfid.openAny()
+  
+  def waitForAttachement()
+  {
+      println("waiting for RFID attachment...");
+      rfid.waitForAttachment(1000);
+  }
 
   def in() {
     action = "in"
@@ -78,42 +89,44 @@ object RFID {
     action = "out"
   }
   
-  def found(tag : String) : Option[JSONObject] = {
-          val responseGet = Http.get("http://smarking.azurewebsites.net/api/users/" + tag).asString
-          if (responseGet != "\"TagNotFound\"") {
-              Some(new JSONObject(responseGet))
-          } else {
-              None
-          }
-  }
-  
-  def passed (tag : String) = {
-      //recherche le tag du user en BD
-      if (action == "in" || action == "out") {
-            val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/in/" + tag).asString
-            if (responseGet == "\"Ok\"") {
-                true
-            } else {
-                false
-            }
+  def inscriptionTag(person:Person):Boolean =
+  {
+    val tag = genTag()
+
+    register(tag, person.lastName, person.firstName, person.mail) match {
+      case Success(rep) => {
+        rfid.write(tag, RFIDPhidget.PHIDGET_RFID_PROTOCOL_PHIDGETS, false) //écrit sur la tag
+        println("\nWrite Tag : " + tag)
+        true
       }
+      case Failure(exc) => {
+        println(exc)
+        false
+      }
+    }
   }
+
+  def ledRedOn() = rfid.setOutputState(0, true)
+  def ledRedOff() = rfid.setOutputState(0, false)
+
+  def ledGreenOn() = rfid.setOutputState(1, true)
+  def ledGreenOff() = rfid.setOutputState(1, false)
   
-  def carPassed (tag : String) : Boolean = {
-    
-         val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
-         println(responsePost)
-          
-         if (interfaceKit.isAttached)
-         {
-            val interfaceKitWaitCar = new InterfaceKitWaitCar()
-            interfaceKitWaitCar.waitForCarToPassBarrier(interfaceKit, "230")  // PUT RIFD HERE
-         } 
-         else 
-         {
-            println("You must attach the interfaceKit");
-            false
-         }
+  def carPassed (tag : String) : Boolean =
+  {
+     val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
+     println(responsePost)
+      
+     if (InterfaceKit.isAttached)
+     {
+        val interfaceKitWaitCar = new InterfaceKitWaitCar()
+        interfaceKitWaitCar.waitForCarToPassBarrier(tag)  // PUT RIFD HERE
+     } 
+     else 
+     {
+        println("You must attach the interfaceKit");
+        false
+     }
   }
 
   def genTag(): String = {
@@ -122,9 +135,10 @@ object RFID {
     time.toString() ++ uuid.toString.replace("-", "").substring(9, 23)
   }
 
-  def register(tag: String, userLastname: String, userFirstName: String, userMail: String) = {
+  def register(tag: String, userLastname: String, userFirstName: String, userMail: String) = 
+  {
     action = "write"
-    Try(Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
+    DataAdd.register(tag, userLastname, userFirstName, userMail)
   }
   
   /*

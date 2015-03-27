@@ -10,24 +10,30 @@ import java.io.IOException;
 import com.phidgets._
 import com.phidgets.event._
 
-
-class Barriere {
-	var servo:AdvancedServoPhidget=null; //test
-	val open:Boolean=false;
-	val close:Boolean=false;
-	
-	def Barriere() = {
-		servo= new AdvancedServoPhidget();
-		/**
-		 * Régler les paramètres du servo motor
-		 * Set Min Position = 0; Set Max Position=100
-		 */
+object Barriere 
+{
+  private val servo = new AdvancedServoPhidget()
+  addAttachListener()
+  addDetachListener()
+  addErrorListener()
+  addServoPositionChangeListener()
+  
+	/**
+	 * Régler les paramètres du servo motor
+	 * Set Min Position = 0; Set Max Position=100
+	 */
+  def addAttachListener()
+  {
 		servo.addAttachListener(new AttachListener() {
 			def attached(ae:AttachEvent ) = {
 				println("attachment of " + ae);
         config();
 			}
 		});
+  }
+  
+  def addDetachListener()
+  {
 		servo.addDetachListener(new DetachListener() {
 			def  detached(ae:DetachEvent) {
 				println("detachment of " + ae);
@@ -38,18 +44,27 @@ class Barriere {
 				}
 			}
 		});
+  }
+    
+  def addErrorListener()
+  {
 		servo.addErrorListener(new ErrorListener() {
 			def  error(ee:ErrorEvent ) {
 				println("error event for " + ee);
 			}
 		});
+   }
+  
+  def addServoPositionChangeListener()
+  {
 		servo.addServoPositionChangeListener(new ServoPositionChangeListener() {
 			def servoPositionChanged(oe:ServoPositionChangeEvent) {
 				println(oe);
 			}
 		});
+    
     config();
-	}
+  }
 	
   def config() {
     println("Configuration du servo motor");

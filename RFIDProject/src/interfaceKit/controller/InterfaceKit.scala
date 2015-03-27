@@ -8,18 +8,15 @@ import scala.util.{ Failure, Try }
 /**
  * Created by Steven on 18-03-15.
  */
-class InterfaceKit {
+object InterfaceKit 
+{
   private val interfaceKit: InterfaceKitPhidget = new InterfaceKitPhidget()
-
-  def initializeInterfaceKit() 
-  {
-    addAttachListener
-    addDetachListener
-    openAny
-  }
+  addAttachListener
+  addDetachListener
+  openAny
 
   def getStreamForValuesFromSensor(index: Int): Stream[Option[Int]] =
-    {
+    {    
       if (interfaceKit.isAttached) {
         val functionToUse = Sensors.listAnalogSensors.filter(x => x._1 == index).head._2
         functionToUse(interfaceKit.getSensorValue(index)) #:: getStreamForValuesFromSensor(index)
