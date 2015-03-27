@@ -10,59 +10,44 @@ import java.io.IOException;
 import com.phidgets._
 import com.phidgets.event._
 
-object Barriere 
+class Barriere 
 {
-  private val servo = new AdvancedServoPhidget()
-  addAttachListener()
-  addDetachListener()
-  addErrorListener()
-  addServoPositionChangeListener()
+  var servo:AdvancedServoPhidget=null; //test
+  val open:Boolean=false;
+  val close:Boolean=false;
   
-	/**
-	 * Régler les paramètres du servo motor
-	 * Set Min Position = 0; Set Max Position=100
-	 */
-  def addAttachListener()
-  {
-		servo.addAttachListener(new AttachListener() {
-			def attached(ae:AttachEvent ) = {
-				println("attachment of " + ae);
+  def Barriere() = {
+    servo= new AdvancedServoPhidget();
+    /**
+     * Régler les paramètres du servo motor
+     * Set Min Position = 0; Set Max Position=100
+     */
+    servo.addAttachListener(new AttachListener() {
+      def attached(ae:AttachEvent ) = {
+        println("attachment of " + ae);
         config();
-			}
-		});
-  }
-  
-  def addDetachListener()
-  {
-		servo.addDetachListener(new DetachListener() {
-			def  detached(ae:DetachEvent) {
-				println("detachment of " + ae);
-				try {
-					servo.setPosition(0, 112.5);
-				} catch {
+      }
+    });
+    servo.addDetachListener(new DetachListener() {
+      def  detached(ae:DetachEvent) {
+        println("detachment of " + ae);
+        try {
+          servo.setPosition(0, 112.5);
+        } catch {
           case e : PhidgetException => println("Problème quand on le branche");
-				}
-			}
-		});
-  }
-    
-  def addErrorListener()
-  {
-		servo.addErrorListener(new ErrorListener() {
-			def  error(ee:ErrorEvent ) {
-				println("error event for " + ee);
-			}
-		});
-   }
-  
-  def addServoPositionChangeListener()
-  {
-		servo.addServoPositionChangeListener(new ServoPositionChangeListener() {
-			def servoPositionChanged(oe:ServoPositionChangeEvent) {
-				println(oe);
-			}
-		});
-    
+        }
+      }
+    });
+    servo.addErrorListener(new ErrorListener() {
+      def  error(ee:ErrorEvent ) {
+        println("error event for " + ee);
+      }
+    });
+    servo.addServoPositionChangeListener(new ServoPositionChangeListener() {
+      def servoPositionChanged(oe:ServoPositionChangeEvent) {
+        println(oe);
+      }
+    });
     config();
   }
 	
