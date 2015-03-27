@@ -21,7 +21,7 @@ object ObservableSensors
   {
     val obs1 = Observable.from(streamSensor0)
     val obs2 = Observable.from(streamSensor1)
-    setIntervalToObservable(obs1.zip(obs2), 500)
+    obs1.zip(obs2)
   }
   
   def setIntervalToObservable[T](obs: Observable[T], duration:Long) =
