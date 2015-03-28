@@ -89,20 +89,23 @@ object RFID
     action = "out"
   }
   
-  def inscriptionTag(person:Person):Boolean =
+  def inscriptionTag(person:Person): Boolean =
   {
     val tag = genTag()
-
-    register(tag, person.lastName, person.firstName, person.mail) match {
-      case Success(rep) => {
-        rfid.write(tag, RFIDPhidget.PHIDGET_RFID_PROTOCOL_PHIDGETS, false) //écrit sur la tag
-        println("\nWrite Tag : " + tag)
-        true
-      }
-      case Failure(exc) => {
-        println(exc)
-        false
-      }
+    
+    try {
+        rfid.write(tag, RFIDPhidget.PHIDGET_RFID_PROTOCOL_PHIDGETS, false) //écrit sur la tag       
+        register(tag, person.lastName, person.firstName, person.mail) match {
+          case Success(rep) => {
+            println("\nWrite Tag : " + tag)
+            true
+          }
+          case Failure(exc) => {
+            false
+          }
+        }
+    } catch {
+      case exc : Exception => false
     }
   }
 

@@ -18,13 +18,20 @@ object DataGet
     else None
   }
   
-  def searchTageUser (tag : String):Boolean = 
+  def searchTagUser (tag : String, action : String) : Boolean = 
   {
-    val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/in/" + tag).asString
+    val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/"+ action +"/" + tag).asString
     
     if (responseGet == "\"Ok\"") 
         true
-     else 
+    else 
         false
   }
+  
+  def foundAction () : String = 
+  {
+    val actionStr = Http.get("http://smarking.azurewebsites.net/api/global/rfid").asString
+    new JSONObject(actionStr).getString("value")
+  }
+  
 }
