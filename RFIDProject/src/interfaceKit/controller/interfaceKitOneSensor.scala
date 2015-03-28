@@ -7,14 +7,26 @@ import scala.concurrent.{Await, Promise}
 import scala.concurrent.duration._
 import scala.util.{Failure, Success, Try}
 import scala.reflect.runtime.universe._
+import interfaceKit.controller._
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
-class interfaceKitOneSensor(val indexSensor:Int)
+class InterfaceKitOneSensor(val indexSensor:Int)
 {
   val endFuture = Promise[Boolean]()
   
+  def startSensor(duration:Long)
+  {
+    Future(launchOneSensor(duration));
+  }
+  
+  def stopSensor()
+  {
+    endFuture.success(true)
+  }
+  
   def launchOneSensor(duration:Long) 
   {
-    val endFuture = Promise[Boolean]()
     val observableSensor = ObservableSensors.observableSimple(InterfaceKit.getStreamForValuesFromSensor(indexSensor), duration)
     val subscriptionCarComeIn = observableSensor.subscribeOn(NewThreadScheduler()).subscribe(onNextValueSensor, ObservableSensors.errorWhatToDo)  
     

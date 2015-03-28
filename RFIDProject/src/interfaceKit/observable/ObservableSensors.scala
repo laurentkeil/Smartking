@@ -14,19 +14,20 @@ object ObservableSensors
 {
   def observableSimple(streamSensor:Stream[Option[Int]], duration:Long) =
   {
-    setIntervalToObservable(Observable.from(streamSensor), 500)
+    setIntervalToObservable(Observable.from(streamSensor), duration)
   }
   
-  def observableTuple(streamSensor0:Stream[Option[Int]], streamSensor1:Stream[Option[Int]]) =
+  def observableTuple(streamSensor0:Stream[Option[Int]], streamSensor1:Stream[Option[Int]], duration:Long) =
   {
     val obs1 = Observable.from(streamSensor0)
     val obs2 = Observable.from(streamSensor1)
-    obs1.zip(obs2)
+    setIntervalToObservable(obs1.zip(obs2), duration)
   }
   
-  def setIntervalToObservable[T](obs: Observable[T], duration:Long) =
+  def setIntervalToObservable[T](obs: Observable[T], duration:Long):Observable[T] =
   {
-    Observable.interval(duration milliseconds).take(1).map(x => obs).flatten
+    val temp = obs.map(x=>Observable.interval(duration milliseconds).map(_=>x).take(1))
+    temp.concat
   }
   
       val errorWhatToDo = (ex:Throwable) => ex match

@@ -16,7 +16,7 @@ object InterfaceKit
   openAny
 
   def getStreamForValuesFromSensor(index: Int): Stream[Option[Int]] =
-    {    
+    {        
       if (interfaceKit.isAttached) {
         val functionToUse = Sensors.listAnalogSensors.filter(x => x._1 == index).head._2
         functionToUse(interfaceKit.getSensorValue(index)) #:: getStreamForValuesFromSensor(index)
