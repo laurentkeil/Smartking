@@ -145,7 +145,7 @@ object RFID
   class updateListener extends ActionListener {
     def actionPerformed(arg0: ActionEvent) {
       action = "update"
-      //write a tag:
+      //write a tag: 
       try { //TODO
         val tag = tagLu.getText
         println("\nWrite Tag : " + tag);

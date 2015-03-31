@@ -160,7 +160,6 @@ object Main {
                       case ("in" | "out") => {
                         DataGet.searchTagUser(tag, action) match {
                           case true => {
-                            println("ok")
                             RFID.ledGreenOn()
                             barriere.ouverture
                             RFID.carPassed(tag) match {
