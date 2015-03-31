@@ -20,13 +20,9 @@ object DataAdd
     
   }
   
-  def addEntryInParking(tagRfid:String)
+  def addFlowParking(idTag : String, action : String)
   {
-    
+    Try(Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" -> action).params("idTag" -> idTag).asString)  
   }
   
-  def addLeavinfFromParking(tagRfid:String)
-  {
-    
-  }
 }

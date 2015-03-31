@@ -100,7 +100,10 @@ object Main {
                           RFID.ledGreenOn()
                           barriere.ouverture
                           JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
-                          RFID.carPassed(tag) //TODO
+                          RFID.carPassed(tag) match {
+                              case true => DataAdd.addFlowParking(tag, RFID.action)
+                              case false => JOptionPane.showMessageDialog(null, "La voiture n'est pas passée", "Passage", JOptionPane.ERROR_MESSAGE);                         
+                          }
                           barriere.fermeture
                           RFID.ledGreenOff()
                         }
@@ -148,7 +151,6 @@ object Main {
             def tagGained(oe: TagGainEvent) {
               val tag = oe.getValue
               println("\nTag Gained: " + tag)
-              RFID.action = "in"
               val userOption = DataGet.found(tag)
     
                 userOption match {
@@ -158,9 +160,13 @@ object Main {
                       case ("in" | "out") => {
                         DataGet.searchTagUser(tag, action) match {
                           case true => {
+                            println("ok")
                             RFID.ledGreenOn()
                             barriere.ouverture
-                            RFID.carPassed(tag) //TODO
+                            RFID.carPassed(tag) match {
+                              case true => DataAdd.addFlowParking(tag, action)
+                              case false => println("Car not passed")
+                            }
                             Thread.sleep(1000)
                             barriere.fermeture
                             RFID.ledGreenOff()

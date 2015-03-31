@@ -116,10 +116,7 @@ object RFID
   def ledGreenOff() = rfid.setOutputState(1, false)
   
   def carPassed (tag : String) : Boolean =
-  {
-     val responsePost = Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" ->action).params("idTag" -> tag).asString        
-     println(responsePost)
-      
+  {   
      if (InterfaceKit.isAttached)
      {
         val interfaceKitWaitCar = new InterfaceKitWaitCar()
