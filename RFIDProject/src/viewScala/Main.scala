@@ -99,8 +99,8 @@ object Main {
                         case true => {
                           RFID.ledGreenOn()
                           barriere.ouverture
-                          JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
                           RFID.carPassed(tag) //TODO
+                          JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
                           barriere.fermeture
                           RFID.ledGreenOff()
                         }

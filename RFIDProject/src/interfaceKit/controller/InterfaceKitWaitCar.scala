@@ -14,7 +14,7 @@ class InterfaceKitWaitCar
   def waitForCarToPassBarrier(rfid:String):Boolean =
   {
     val observableTupleWithInterval: Observable[(Option[Int], Option[Int])] = ObservableSensors.observableTuple(
-      InterfaceKit.getStreamForValuesFromSensor(0), InterfaceKit.getStreamForValuesFromSensor(1), 500)
+      InterfaceKit.getStreamForValuesFromSensor(0, None), InterfaceKit.getStreamForValuesFromSensor(1, None), 500)
 
     if(waitCar(observableTupleWithInterval))
     {

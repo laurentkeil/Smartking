@@ -29,4 +29,9 @@ object DataAdd
   {
     
   }
+  
+  def addTemperatureInWebservice()
+  {
+    //val request = Http.post("http://smarking.azurewebsites.net/api/users").
+  }
 }
