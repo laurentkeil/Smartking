@@ -27,7 +27,10 @@ class InterfaceKitOneSensor(val indexSensor:Int)
   
   def launchOneSensor(duration:Long) 
   {
-    val observableSensor = ObservableSensors.observableSimple(InterfaceKit.getStreamForValuesFromSensor(indexSensor), duration)
+    val myStream = InterfaceKit.getStreamForValuesFromSensor(indexSensor, None)
+    
+    
+    val observableSensor = ObservableSensors.observableSimple(myStream, duration)
     val subscriptionCarComeIn = observableSensor.subscribeOn(NewThreadScheduler()).subscribe(onNextValueSensor, ObservableSensors.errorWhatToDo)  
     
     Await.ready(endFuture.future, Duration.Inf)

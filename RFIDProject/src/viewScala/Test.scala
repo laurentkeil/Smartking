@@ -25,7 +25,7 @@ object Test
     println("début test")
     
     val oneSensor = new InterfaceKitOneSensor(0)
-    oneSensor.startSensor(500)
+    oneSensor.startSensor(100)
     
     StdIn.readLine()
     oneSensor.stopSensor()

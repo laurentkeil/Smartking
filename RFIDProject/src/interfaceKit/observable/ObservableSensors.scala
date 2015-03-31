@@ -14,7 +14,7 @@ object ObservableSensors
 {
   def observableSimple(streamSensor:Stream[Option[Int]], duration:Long) =
   {
-    setIntervalToObservable(Observable.from(streamSensor), duration)
+    Observable.from(streamSensor.map { x => Thread.sleep(duration); x })
   }
   
   def observableTuple(streamSensor0:Stream[Option[Int]], streamSensor1:Stream[Option[Int]], duration:Long) =

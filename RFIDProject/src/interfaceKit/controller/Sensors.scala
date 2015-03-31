@@ -20,14 +20,7 @@ object Sensors
     if(x < 500) Some(1) else Some(0)
   }
 
-  val listAnalogSensors: List[(Int, (Int) => Option[Int])] = List(
-    (0, (x:Int) => functionSharpSensor(x)),
-    (1, (x:Int) => functionSharpSensor(x)),
-    (2, (x:Int) => Some(x)),
-    (3, (x:Int) => Some(x)),
-    (4, (x:Int) => Some(x)),
-    (5, (x:Int) => Some(x)),
-    (6, (x:Int) => Some(x)),
-    (7, (x:Int) => Some(x)))
-
+  val listAnalogSensors= List(
+    (0, (((x:Int) => functionSharpSensor(x)), (3, 200.toLong))), // (indexSensor, (functionToComputeAnalogValue, (treshold, interval)))
+    (1, (((x:Int) => functionSharpSensor(x)), (3, 200.toLong))))
 }

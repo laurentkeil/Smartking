@@ -15,15 +15,25 @@ object InterfaceKit
   addDetachListener
   openAny
 
-  def getStreamForValuesFromSensor(index: Int): Stream[Option[Int]] =
-    {        
-      if (interfaceKit.isAttached) {
-        val functionToUse = Sensors.listAnalogSensors.filter(x => x._1 == index).head._2
-        functionToUse(interfaceKit.getSensorValue(index)) #:: getStreamForValuesFromSensor(index)
-      } else
-        getStreamForValuesFromSensor(index)
-    }
-
+  def getStreamForValuesFromSensor(index: Int, oldValue:Option[Int]): Stream[Option[Int]] =
+  {       
+    var newValue:Option[Int] = None
+    
+    if (interfaceKit.isAttached) 
+    {
+      Sensors.listAnalogSensors.filter(x => x._1 == index).head match
+      {
+        case ((indexSensor:Int, (functionToUse:(Int => Option[Int]), (treshold:Int, interval:Long))))  =>
+        {
+          newValue = functionToUse(interfaceKit.getSensorValue(index))
+        }
+        case _ => 
+      } 
+    } 
+    
+    newValue #:: getStreamForValuesFromSensor(index, newValue)
+  }
+  
   def waitForAttachment =
     {
       println("wait for attachment")

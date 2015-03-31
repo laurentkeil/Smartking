@@ -25,4 +25,14 @@ object DataAdd
     Try(Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" -> action).params("idTag" -> idTag).asString)  
   }
   
+  def addLeavinfFromParking(tagRfid:String)
+  {
+    
+  }
+  
+  def addTemperatureInWebservice()
+  {
+    //val request = Http.post("http://smarking.azurewebsites.net/api/users").
+  }
+  
 }
