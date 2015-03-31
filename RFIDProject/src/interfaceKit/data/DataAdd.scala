@@ -5,9 +5,14 @@ import scala.util._
 
 object DataAdd 
 {
-  def register(tag: String, userLastname: String, userFirstName: String, userMail: String) = 
+  def register (tag: String, userLastname: String, userFirstName: String, userMail: String) = 
   {
     Try(Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
+  }
+  
+  def updateUser (idUser : String, userLastname: String, userFirstName: String, userMail: String) = 
+  {
+    Try(Http("http://smarking.azurewebsites.net/api/users").method("PUT").params(Map(("id", idUser), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
   }
   
   def updateTagCarNotComeIn(tagRfid:String)

@@ -89,6 +89,32 @@ object RFID
     action = "out"
   }
   
+  def updateUser (tag : String, person : Person) = 
+  {
+    action = "write"
+    val user = DataGet.found(tag)
+    val idUser = user match {
+      case Some(person) => person.id
+      case None => throw new Exception("Pas get") //TODO
+    }
+    DataAdd.updateUser(idUser, person.lastName, person.firstName, person.mail) match {
+      case Success(rep) => {
+        println(rep)
+        true
+      }
+      case Failure(exc) => {
+        println(exc)
+        false
+      }
+    }
+  }
+  
+  def register(tag: String, userLastname: String, userFirstName: String, userMail: String) = 
+  {
+    action = "write"
+    DataAdd.register(tag, userLastname, userFirstName, userMail)
+  }
+  
   def inscriptionTag(person:Person): Boolean =
   {
     val tag = genTag()
@@ -134,37 +160,5 @@ object RFID
     val time = System.currentTimeMillis() / 1000;
     time.toString() ++ uuid.toString.replace("-", "").substring(9, 23)
   }
-
-  def register(tag: String, userLastname: String, userFirstName: String, userMail: String) = 
-  {
-    action = "write"
-    DataAdd.register(tag, userLastname, userFirstName, userMail)
-  }
-  
-  /*
-  class updateListener extends ActionListener {
-    def actionPerformed(arg0: ActionEvent) {
-      action = "update"
-      //write a tag: 
-      try { //TODO
-        val tag = tagLu.getText
-        println("\nWrite Tag : " + tag);
-        //entre le tag du user en BD
-        val responsePost = Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag))).asString
-        println(responsePost)
-        rfid.setOutputState(1, true) //ecriture : vert si tag a bien été écrit en BD
-        JOptionPane.showMessageDialog(null, "Les informations ont été mise à jour", "Mis à jour", JOptionPane.INFORMATION_MESSAGE);
-        Thread.sleep(1000)
-        rfid.setOutputState(1, false)
-      } catch {
-        case exc: PhidgetException =>
-          println(exc)
-          rfid.setOutputState(0, true)
-          JOptionPane.showMessageDialog(null, "Les informations n'ont pas pu être mise à jour", "Mis à jour", JOptionPane.ERROR_MESSAGE);
-          Thread.sleep(1000)
-          rfid.setOutputState(0, false)
-      }
-    }
-  }*/
 
 }
