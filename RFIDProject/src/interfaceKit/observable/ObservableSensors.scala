@@ -21,16 +21,16 @@ object ObservableSensors
   {
     val obs1 = Observable.from(streamSensor0)
     val obs2 = Observable.from(streamSensor1)
-    setIntervalToObservable(obs1.zip(obs2), duration)
+    obs1.zip(obs2)
   }
   
   def setIntervalToObservable[T](obs: Observable[T], duration:Long):Observable[T] =
   {
     val temp = obs.map(x=>Observable.interval(duration milliseconds).map(_=>x).take(1))
-    temp.concat
+    temp.flatten
   }
   
-      val errorWhatToDo = (ex:Throwable) => ex match
+  val errorWhatToDo = (ex:Throwable) => ex match
   {
     case ex:InterruptedException =>
     case _ => ex.printStackTrace()

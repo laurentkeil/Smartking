@@ -1,1 +1,2 @@
 Main-Class: viewScala.Main
+Class-Path: scala-library.jar

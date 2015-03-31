@@ -8,11 +8,13 @@ import com.phidgets.event._
 import javax.swing._
 import scala.util._
 import interfaceKit.data._
+import interfaceKit.controller.InterfaceKit
 
 object Main {
   
   def main(args: Array[String]) 
   {
+    InterfaceKit.openAny
     val interfaceGraphique = false
     val barriere = new Barriere()
     barriere.Barriere()
