@@ -8,12 +8,9 @@ object DataGet
 {
   def found(tag : String) : Option[Person] = 
   {
-    println("test2")
 
     val url = "http://smarking.azurewebsites.net/api/users/" + tag
     val responseGet = Http.get(url).asString
-
-    println("test3")
 
     if (responseGet != "\"TagNotFound\"") 
     {
