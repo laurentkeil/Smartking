@@ -30,9 +30,13 @@ object Main {
             {
               RFID.action = "write"
               switchToWriteMode()
-            }
-            else
+            } else if (_comboBox.getSelectedItem() == "Scan"){
+              RFID.action = "no"
               switchToReadMode()
+            } else {
+              RFID.action = "update"
+              switchToUpdateMode()
+            }
           }
 
           override def actionScalaIn()
@@ -54,7 +58,34 @@ object Main {
           {
             barriere.fermeture()
           }
-    
+
+          override def actionScalaSearch()
+          {
+            println("ok")
+          }
+
+          override def actionScalaUpdateTag() {
+
+              verifChamps match {
+                case None => {
+                  val person = new Person(_textFieldUserPrenom.getText, _textFieldUserNom.getText, _textFieldUserMail.getText)
+
+                  if (RFID.updateUser(person)) {
+                    RFID.ledGreenOn()
+                    JOptionPane.showMessageDialog(null, "L'utilisateur a bien été mis à jour", "MAJ", JOptionPane.INFORMATION_MESSAGE);
+                    RFID.ledGreenOff()
+                  } else {
+                    RFID.ledRedOn()
+                    JOptionPane.showMessageDialog(null, "L'utilisateur n'a pas été mis à jour", "MAJ", JOptionPane.ERROR_MESSAGE);
+                    RFID.ledRedOff()
+                  }
+                }
+                case Some(exc) => {
+                  JOptionPane.showMessageDialog(null, exc.toString(), "MAJ", JOptionPane.ERROR_MESSAGE);
+                }
+              }
+          }
+
           override def actionScalaWrite() {
               verifChamps match {
                 case None => {
@@ -120,10 +151,10 @@ object Main {
             {
               val tag = oe.getValue
               println("\nTag Gained: " + tag)
-              _textFieldTagLu.setText(tag)
 
-              if (RFID.action != "write")
+              if (RFID.action != "write" && RFID.action != "update")
               {
+                _textFieldTagLu.setText(tag)
                 val userOption = DataGet.found(tag)
 
                 userOption match

@@ -22,7 +22,7 @@ public abstract class PanelWelcome extends JPanel
 	private static final long serialVersionUID = 3862594280332085599L;
 	
 	protected JPanel _panelCenter, _panelSouth, _panelTop, _panelReadPan, _panelUserPan;
-	protected JButton _buttonIn, _buttonOut, _buttonOpen, _buttonClose, _buttonInscription, _buttonUpdate;
+	protected JButton _buttonIn, _buttonOut, _buttonOpen, _buttonClose, _buttonInscription, _buttonUpdate, _buttonUpdateTag, _buttonSearch;
 	protected JLabel _labelChoix, _labelTag, _labelUserNom, _labelUserPrenom, _labelUserMail;
 	protected JTextField _textFieldTagLu, _textFieldUserNom, _textFieldUserPrenom, _textFieldUserMail;
 	protected JComboBox<String> _comboBox;
@@ -38,6 +38,8 @@ public abstract class PanelWelcome extends JPanel
 		
 		_buttonInscription = new JButton("Inscription");
 		_buttonUpdate = new JButton("Mise à jour");
+		_buttonSearch = new JButton("Rechercher un utilisateur par mail");
+		_buttonUpdateTag = new JButton("Mise à jour du tag");
 		_buttonIn = new JButton("Entrée parking");
 		_buttonOut = new JButton("Sortie Parking");
 		_buttonOpen = new JButton("Ouvrir barrière");
@@ -46,6 +48,8 @@ public abstract class PanelWelcome extends JPanel
         
         _buttonInscription.addActionListener(writeListener());
         _buttonUpdate.addActionListener(updateListener());
+		_buttonUpdateTag.addActionListener(updateTagListener());
+		_buttonSearch.addActionListener(searchListener());
 	    _buttonIn.addActionListener(inListener());
 	    _buttonOut.addActionListener(outListener());
 	    _buttonOpen.addActionListener(openListener());
@@ -54,11 +58,12 @@ public abstract class PanelWelcome extends JPanel
 		_comboBox = new JComboBox<String>();
 	    _comboBox.addItem("Scan");
 	    _comboBox.addItem("Inscription");
+		_comboBox.addItem("Mise à jour");
 	    _comboBox.addActionListener(formListener());
 	    
 		_labelTag = new JLabel();
 		_textFieldTagLu = new JTextField();
-		
+
 		_labelUserNom = new JLabel();
 	    _labelUserNom.setText("Nom : ");
 		_textFieldUserNom = new JTextField();
@@ -122,12 +127,23 @@ public abstract class PanelWelcome extends JPanel
 	    _panelSouth.add(_buttonClose);
 	    add(_panelSouth, BorderLayout.SOUTH);
 	}
-	
-	public void switchToWriteMode()
+
+	public void switchToUpdateMode()
 	{
+		_panelSouth.removeAll();
+		_panelSouth.add(_buttonSearch);
+		_panelSouth.add(_buttonUpdate);
+		_panelSouth.add(_buttonUpdateTag);
+		_textFieldUserNom.setEditable(true);
+		_textFieldUserPrenom.setEditable(true);
+		_textFieldUserMail.setEditable(true);
+		_panelSouth.revalidate();
+		_panelSouth.repaint();
+	}
+
+	public void switchToWriteMode() {
         _panelSouth.removeAll();
         _panelSouth.add(_buttonInscription);
-        _panelSouth.add(_buttonUpdate);
         _textFieldUserNom.setEditable(true);
         _textFieldUserPrenom.setEditable(true);
         _textFieldUserMail.setEditable(true);
@@ -140,20 +156,20 @@ public abstract class PanelWelcome extends JPanel
         _panelSouth.removeAll();
         _panelSouth.revalidate();
         _panelSouth.repaint();
-        _panelSouth.add(_buttonIn);
+		_panelSouth.add(_buttonIn);
         _panelSouth.add(_buttonOut);
-        _panelSouth.add(_buttonOpen);
-        _panelSouth.add(_buttonClose);
+		_panelSouth.add(_buttonOpen);
+		_panelSouth.add(_buttonClose);
         _textFieldUserNom.setEditable(false);
-        _textFieldUserPrenom.setEditable(false);
-        _textFieldUserMail.setEditable(false);
+		_textFieldUserPrenom.setEditable(false);
+		_textFieldUserMail.setEditable(false);
 	}
 	
     public void updatePersonFields(String lastName, String firstName, String mail)
     {
-        _textFieldUserNom.setText(lastName);
-        _textFieldUserPrenom.setText(firstName);
-        _textFieldUserMail.setText(mail);
+		_textFieldUserNom.setText(lastName);
+		_textFieldUserPrenom.setText(firstName);
+		_textFieldUserMail.setText(mail);
         
         if(lastName.equals("") && firstName.equals("") && mail.equals(""))
         	_checkBoxClient.setSelected(false);
@@ -233,6 +249,30 @@ public abstract class PanelWelcome extends JPanel
 			}
 		};
 	}
+
+	public ActionListener searchListener()
+	{
+		return new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				actionScalaSearch();
+			}
+		};
+	}
+
+	public ActionListener updateTagListener()
+	{
+		return new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				actionScalaUpdateTag();
+			}
+		};
+	}
 	
 	public ActionListener formListener()
 	{
@@ -252,5 +292,7 @@ public abstract class PanelWelcome extends JPanel
 	protected abstract void actionScalaClose();
 	protected abstract void actionScalaWrite();
 	protected abstract void actionScalaUpdate();
+	protected abstract void actionScalaSearch();
+	protected abstract void actionScalaUpdateTag();
 	protected abstract void actionScalaForm();
 }

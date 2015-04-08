@@ -11,8 +11,7 @@ object DataGet
 
     val url = "http://smarking.azurewebsites.net/api/users/" + tag
     val responseGet = Http.get(url).asString
-
-    if (responseGet != "\"TagNotFound\"") 
+    if (responseGet != "\"TagNotFound\"" && responseGet != "\"Expired\"" && responseGet != "\"UserNotFound\"")
     {
       val temp = new JSONObject(responseGet)
       Some(new Person(temp.get("id").toString, temp.get("firstname").toString, temp.get("lastname").toString, temp.get("mail").toString))

@@ -88,10 +88,10 @@ object RFID
   def out() {
     action = "out"
   }
-  
+
+  //update tout sauf le taf
   def updateUser (tag : String, person : Person) = 
   {
-    action = "write"
     val user = DataGet.found(tag)
     val idUser = user match {
       case Some(person) => person.id
@@ -99,19 +99,42 @@ object RFID
     }
     DataAdd.updateUser(idUser, person.lastName, person.firstName, person.mail) match {
       case Success(rep) => {
-        println(rep)
         true
       }
       case Failure(exc) => {
-        println(exc)
         false
       }
+    }
+  }
+
+  //update tout en regénérant un tag (si l'user perd son tag ...)
+  def updateUser (person : Person) =
+  {
+    val tag = genTag()
+
+    try {
+      rfid.write(tag, RFIDPhidget.PHIDGET_RFID_PROTOCOL_PHIDGETS, false) //écrit sur la tag
+
+      val user = DataGet.found(tag)
+      val idUser = user match {
+        case Some(person) => person.id
+        case None => throw new Exception("Utilisateur non-existant")
+      }
+      DataAdd.updateUser(idUser, person.lastName, person.firstName, person.mail) match {
+        case Success(rep) => {
+          true
+        }
+        case Failure(exc) => {
+          false
+        }
+      }
+    } catch {
+      case exc : Exception => false
     }
   }
   
   def register(tag: String, userLastname: String, userFirstName: String, userMail: String) = 
   {
-    action = "write"
     DataAdd.register(tag, userLastname, userFirstName, userMail)
   }
   
