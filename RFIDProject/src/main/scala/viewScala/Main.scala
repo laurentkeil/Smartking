@@ -140,10 +140,13 @@ object Main {
                         {
                           RFID.ledGreenOn()
                           barriere.ouverture
-                          JOptionPane.showMessageDialog(null, "L'utilisateur est bien passé", "Passage", JOptionPane.INFORMATION_MESSAGE);
+                          JOptionPane.showMessageDialog(null, "L'utilisateur peut passer, faites entrer la voiture.", "Passage", JOptionPane.INFORMATION_MESSAGE);
                           RFID.carPassed(tag) match
                           {
-                            case true => DataAdd.addFlowParking(tag, RFID.action)
+                            case true => {
+                                          DataAdd.addFlowParking(tag, RFID.action)
+                                          JOptionPane.showMessageDialog(null, "La voiture est bien passée.", "Passage", JOptionPane.INFORMATION_MESSAGE);
+                            }
                             case false => JOptionPane.showMessageDialog(null, "La voiture n'est pas passée", "Passage", JOptionPane.ERROR_MESSAGE);
                           }
                           barriere.fermeture
@@ -152,7 +155,7 @@ object Main {
                         case false =>
                         {
                           RFID.ledRedOn() //rouge si le tag est présent en BD
-                          JOptionPane.showMessageDialog(null, "L'utilisateur n'a pas pu passer", "Passage", JOptionPane.ERROR_MESSAGE);
+                          JOptionPane.showMessageDialog(null, "L'utilisateur ne peut pas passer", "Passage", JOptionPane.ERROR_MESSAGE);
                           RFID.ledRedOff()
                         }
                       }
@@ -200,8 +203,6 @@ object Main {
               val tag = oe.getValue
               println("\nTag Gained: " + tag)
               val userOption = DataGet.found(tag)
-
-              println("test1")
 
                 userOption match {
                   case Some(user) => {

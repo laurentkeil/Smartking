@@ -77,8 +77,8 @@ object RFID
   
   def waitForAttachement()
   {
-      println("waiting for RFID attachment...");
-      rfid.waitForAttachment(1000);
+      println("waiting for RFID attachment...")
+      rfid.waitForAttachment(1000)
   }
 
   def in() {

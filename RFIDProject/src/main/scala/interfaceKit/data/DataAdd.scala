@@ -7,6 +7,7 @@ object DataAdd
 {
   def register (tag: String, userLastname: String, userFirstName: String, userMail: String) = 
   {
+    println("ok")
     Try(Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
   }
   

@@ -24,10 +24,12 @@ object DataGet
   {
     val responseGet = Http.get("http://smarking.azurewebsites.net/api/Tags/"+ action +"/" + tag).asString
     
-    if (responseGet == "\"Ok\"") 
+    if (responseGet == "\"Ok\"") {
         true
-    else 
+    }
+    else {
         false
+    }
   }
   
   def foundAction () : String = 

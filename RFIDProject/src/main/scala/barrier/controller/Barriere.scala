@@ -24,15 +24,14 @@ class Barriere
      */
     servo.addAttachListener(new AttachListener() {
       def attached(ae:AttachEvent ) = {
-        println("attachment of " + ae);
-        config();
+        println("attachment of " + ae)
       }
     });
     servo.addDetachListener(new DetachListener() {
       def  detached(ae:DetachEvent) {
-        println("detachment of " + ae);
+        println("detachment of " + ae)
         try {
-          servo.setPosition(0, 112.5);
+          servo.setPosition(0, 112.5)
         } catch {
           case e : PhidgetException => println("Problème quand on le branche");
         }
@@ -56,7 +55,6 @@ class Barriere
     println("waiting for AdvancedServo attachment...");
     servo.openAny();
     servo.waitForAttachment();
-    servo.openAny();
     servo.setPosition(0, 112.5);
     servo.setEngaged(0, true);
   }
