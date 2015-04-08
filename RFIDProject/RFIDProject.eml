@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inheritJdk="true">
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$"/>
+	<lib name="org.json.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/RFIDProject/lib/org.json.jar!/"/>
+	</lib>
+	<lib name="phidget21.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/RFIDProject/lib/phidget21.jar!/"/>
+	</lib>
+	<lib name="scalaj-http_2.11-0.3.16.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/RFIDProject/lib/scalaj-http_2.11-0.3.16.jar!/"/>
+	</lib>
+	<lib name="rxjava-1.0.7.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/RFIDProject/lib/rxjava-1.0.7.jar!/"/>
+	</lib>
+	<lib name="rxscala_2.11-0.24.0-javadoc.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/RFIDProject/lib/rxscala_2.11-0.24.0-javadoc.jar!/"/>
+	</lib>
+	<lib name="rxscala_2.11-0.24.0.jar" scope="COMPILE">
+		<relative-module-cls project-related="jar://$PROJECT_DIR$/RFIDProject/lib/rxscala_2.11-0.24.0.jar!/"/>
+	</lib>
+</component>
