@@ -54,54 +54,6 @@ object Main {
           {
             barriere.fermeture()
           }
-<<<<<<< HEAD:RFIDProject/src/main/scala/viewScala/Main.scala
-
-          override def actionScalaWrite()
-          {
-            verifChamps match
-            {
-              case None =>
-              {
-                val person = new Person(_textFieldUserPrenom.getText, _textFieldUserNom.getText, _textFieldUserMail.getText)
-
-                if (RFID.inscriptionTag(person))
-                {
-                  RFID.ledGreenOn()
-                  JOptionPane.showMessageDialog(null, "L'utilisateur est bien inscrit", "Inscription", JOptionPane.INFORMATION_MESSAGE);
-                  RFID.ledGreenOff()
-                }
-                else
-                {
-                  RFID.ledRedOn()
-                  JOptionPane.showMessageDialog(null, "L'utilisateur n'a pas été inscrit", "Inscription", JOptionPane.ERROR_MESSAGE);
-                  RFID.ledRedOff()
-                }
-              }
-              case Some(exc) =>
-              {
-                JOptionPane.showMessageDialog(null, exc.toString(), "Inscription", JOptionPane.ERROR_MESSAGE);
-              }
-            }
-          }
-
-          override def actionScalaUpdate()
-          {
-
-          }
-
-          def verifChamps(): Option[String] =
-          {
-            if (_textFieldUserPrenom.getText.isEmpty() || _textFieldUserNom.getText.isEmpty() || _textFieldUserMail.getText.isEmpty())
-              Some("Veuillez remplir les champs.")
-            else if (!_textFieldUserMail.getText.matches("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$"))
-            {
-              Some("Veuillez encoder une adresse e-mail correcte.")
-            }
-            else
-            {
-              None
-            }
-=======
     
           override def actionScalaWrite() {
               verifChamps match {
@@ -160,7 +112,6 @@ object Main {
               } else {
                 None
               }
->>>>>>> origin/master:RFIDProject/src/viewScala/Main.scala
           }
 
           RFID.rfid.addTagGainListener(new TagGainListener()
