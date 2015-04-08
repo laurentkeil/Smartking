@@ -95,7 +95,7 @@ object RFID
     val user = DataGet.found(tag)
     val idUser = user match {
       case Some(person) => person.id
-      case None => throw new Exception("Pas get") //TODO
+      case None => throw new Exception("Utilisateur non-existant")
     }
     DataAdd.updateUser(idUser, person.lastName, person.firstName, person.mail) match {
       case Success(rep) => {

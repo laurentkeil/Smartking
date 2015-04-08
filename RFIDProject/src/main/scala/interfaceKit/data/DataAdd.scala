@@ -7,13 +7,12 @@ object DataAdd
 {
   def register (tag: String, userLastname: String, userFirstName: String, userMail: String) = 
   {
-    println("ok")
     Try(Http.post("http://smarking.azurewebsites.net/api/users").params(Map(("idTag", tag), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
   }
   
   def updateUser (idUser : String, userLastname: String, userFirstName: String, userMail: String) = 
   {
-    Try(Http("http://smarking.azurewebsites.net/api/users").method("PUT").params(Map(("id", idUser), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
+    Try(Http("http://smarking.azurewebsites.net/api/users").method("put").params(Map(("id", idUser), ("lastname", userLastname), ("firstname", userFirstName), ("mail", userMail))).asString)
   }
   
   def updateTagCarNotComeIn(tagRfid:String)
@@ -31,7 +30,7 @@ object DataAdd
     Try(Http.post("http://smarking.azurewebsites.net/api/FlowUsers").params("action" -> action).params("idTag" -> idTag).asString)  
   }
   
-  def addLeavinfFromParking(tagRfid:String)
+  def addLeavingFromParking(tagRfid:String)
   {
     
   }

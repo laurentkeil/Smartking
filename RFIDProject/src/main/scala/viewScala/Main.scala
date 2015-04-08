@@ -79,9 +79,9 @@ object Main {
           override def actionScalaUpdate() {
               val tag = _textFieldTagLu.getText
               if(tag.isEmpty()) {
-                RFID.ledRedOn()
-                JOptionPane.showMessageDialog(null, "Veuillez scanner le tag RFID", "Inscription", JOptionPane.ERROR_MESSAGE);
-                RFID.ledRedOff()
+                  RFID.ledRedOn()
+                  JOptionPane.showMessageDialog(null, "Veuillez scanner le tag RFID", "Inscription", JOptionPane.ERROR_MESSAGE);
+                  RFID.ledRedOff()
               } else {
                 verifChamps match {
                   case None => {
